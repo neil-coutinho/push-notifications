@@ -53,7 +53,47 @@ function updateBtn() {
   pushButton.disabled = false;
 }
 
+
+async function subscribeUser() {
+  const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+  console.log({applicationServerKey});
+
+  const subscription = await swRegistration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey
+  }).catch((e) => {
+    console.error('Failed to subscribe the user: ', error);
+    updateBtn();
+  });
+
+  
+
+  if(subscription) {
+    console.log('User is subscribed.', subscription);
+    isSubscribed = true;
+    updateBtn();
+
+  }
+
+}
+
+
+
 async function init() {
+
+  pushButton.addEventListener('click',(e) => {
+    pushButton.disabled = true;
+    if(isSubscribed) {
+      //TODO: UNSUBSCRIBE
+    } else {
+      subscribeUser();
+    }
+
+  });
+
+
+  
+
   const subscription = await swRegistration.pushManager.getSubscription();
   console.log({subscription});
   if(!subscription) {
