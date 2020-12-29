@@ -43,19 +43,46 @@ function urlB64ToUint8Array(base64String) {
   return outputArray;
 }
 
+function updateBtn() {
+  if (isSubscribed) {
+    pushButton.textContent = 'Disable Push Messaging';
+  } else {
+    pushButton.textContent = 'Enable Push Messaging';
+  }
 
+  pushButton.disabled = false;
+}
 
+async function init() {
+  const subscription = await swRegistration.pushManager.getSubscription();
+  console.log({subscription});
+  if(!subscription) {
+    isSubscribed = false;
+  } else {
+    isSubscribed = true;
+  }
+
+  if (isSubscribed) {
+    console.log('User IS subscribed.');
+  } else {
+    console.log('User is NOT subscribed.');
+  }
+
+  updateBtn();
+
+}
 
 async function registerServiceWorker() {
   if('serviceWorker' in navigator && 'PushManager' in window) {
     console.log('Service Worker and Push are supported');
-    const sw = await navigator.serviceWorker.register('sw.js').catch((e) => { 
+    swRegistration = await navigator.serviceWorker.register('sw.js').catch((e) => { 
       console.error('Service Worker Error', error);
     });
    
 
-    if(sw) {
-      console.log({sw});
+    if(swRegistration) {
+      console.log({swRegistration});
+      init();
     }
   
   } else {
@@ -65,3 +92,5 @@ async function registerServiceWorker() {
 }
 
 registerServiceWorker();
+
+
