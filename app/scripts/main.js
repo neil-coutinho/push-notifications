@@ -44,6 +44,16 @@ function urlB64ToUint8Array(base64String) {
 }
 
 function updateBtn() {
+
+  console.log({Notification})
+
+  if(Notification.permission === 'denied') {
+    pushButton.textContent = 'Push Messaging Disabled';
+    pushButton.disabled = true;
+    return;
+  }
+
+
   if (isSubscribed) {
     pushButton.textContent = 'Disable Push Messaging';
   } else {
@@ -61,7 +71,7 @@ async function subscribeUser() {
   const subscription = await swRegistration.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey
-  }).catch((e) => {
+  }).catch((error) => {
     console.error('Failed to subscribe the user: ', error);
     updateBtn();
   });
